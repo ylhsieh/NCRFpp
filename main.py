@@ -58,7 +58,7 @@ def predict_check(pred_variable, gold_variable, mask_variable, sentence_classifi
     else:
         right_token = np.sum(overlaped * mask)
         total_token = mask.sum()
-    # print("right: %s, total: %s"%(right_token, total_token))
+    # print("right: %s, total: %s" % (right_token, total_token))
     return right_token, total_token
 
 
@@ -293,7 +293,7 @@ def batchify_sentence_classification_with_label(input_batch_list, gpu, if_train=
 
     batch_size = len(input_batch_list)
     words = [sent[0] for sent in input_batch_list]
-    features = [np.asarray(sent[1]) for sent in input_batch_list]    
+    features = [np.asarray(sent[1]) for sent in input_batch_list]
     feature_num = len(features[0])
     chars = [sent[2] for sent in input_batch_list]
     labels = [sent[3] for sent in input_batch_list]
@@ -373,7 +373,7 @@ def train(data):
     elif data.optimizer.lower() == "adam":
         optimizer = optim.Adam(model.parameters(), lr=data.HP_lr, weight_decay=data.HP_l2)
     else:
-        print("Optimizer illegal: %s"%(data.optimizer))
+        print("Optimizer illegal: %s" % (data.optimizer))
         exit(1)
     best_dev = -10
     # data.HP_iteration = 1
@@ -416,11 +416,11 @@ def train(data):
             # print("loss:",loss.item())
             sample_loss += loss.item()
             total_loss += loss.item()
-            if end%500 == 0:
+            if end % 500 == 0:
                 temp_time = time.time()
                 temp_cost = temp_time - temp_start
                 temp_start = temp_time
-                print("     Instance: %s; Time: %.2fs; loss: %.4f; acc: %s/%s=%.4f"%(end, temp_cost, sample_loss, right_token, whole_token,(right_token+0.)/whole_token))
+                print("     Instance: %s; Time: %.2fs; loss: %.4f; acc: %s/%s=%.4f" % (end, temp_cost, sample_loss, right_token, whole_token,(right_token+0.)/whole_token))
                 if sample_loss > 1e8 or str(sample_loss) == "nan":
                     print("ERROR: LOSS EXPLOSION (>1e8) ! PLEASE SET PROPER PARAMETERS AND STRUCTURE! EXIT....")
                     exit(1)
@@ -431,11 +431,11 @@ def train(data):
             model.zero_grad()
         temp_time = time.time()
         temp_cost = temp_time - temp_start
-        print("     Instance: %s; Time: %.2fs; loss: %.4f; acc: %s/%s=%.4f"%(end, temp_cost, sample_loss, right_token, whole_token,(right_token+0.)/whole_token))
+        print("     Instance: %s; Time: %.2fs; loss: %.4f; acc: %s/%s=%.4f" % (end, temp_cost, sample_loss, right_token, whole_token,(right_token+0.)/whole_token))
 
         epoch_finish = time.time()
         epoch_cost = epoch_finish - epoch_start
-        print("Epoch: %s training finished. Time: %.2fs, speed: %.2fst/s,  total loss: %s"%(idx, epoch_cost, train_num/epoch_cost, total_loss))
+        print("Epoch: %s training finished. Time: %.2fs, speed: %.2fst/s,  total loss: %s" % (idx, epoch_cost, train_num/epoch_cost, total_loss))
         print("totalloss:", total_loss)
         if total_loss > 1e8 or str(total_loss) == "nan":
             print("ERROR: LOSS EXPLOSION (>1e8) ! PLEASE SET PROPER PARAMETERS AND STRUCTURE! EXIT....")
@@ -447,10 +447,10 @@ def train(data):
 
         if data.seg:
             current_score = f
-            print("Dev: time: %.2fs, speed: %.2fst/s; acc: %.4f, p: %.4f, r: %.4f, f: %.4f"%(dev_cost, speed, acc, p, r, f))
+            print("Dev: time: %.2fs, speed: %.2fst/s; acc: %.4f, p: %.4f, r: %.4f, f: %.4f" % (dev_cost, speed, acc, p, r, f))
         else:
             current_score = acc
-            print("Dev: time: %.2fs speed: %.2fst/s; acc: %.4f"%(dev_cost, speed, acc))
+            print("Dev: time: %.2fs speed: %.2fst/s; acc: %.4f" % (dev_cost, speed, acc))
 
         if current_score > best_dev:
             if data.seg:
@@ -466,9 +466,9 @@ def train(data):
         test_finish = time.time()
         test_cost = test_finish - dev_finish
         if data.seg:
-            print("Test: time: %.2fs, speed: %.2fst/s; acc: %.4f, p: %.4f, r: %.4f, f: %.4f"%(test_cost, speed, acc, p, r, f))
+            print("Test: time: %.2fs, speed: %.2fst/s; acc: %.4f, p: %.4f, r: %.4f, f: %.4f" % (test_cost, speed, acc, p, r, f))
         else:
-            print("Test: time: %.2fs, speed: %.2fst/s; acc: %.4f"%(test_cost, speed, acc))
+            print("Test: time: %.2fs, speed: %.2fst/s; acc: %.4f" % (test_cost, speed, acc))
         gc.collect()
 
 
@@ -489,15 +489,15 @@ def load_model_decode(data, name):
     #     # model = torch.load(model_dir)
     model.load_state_dict(torch.load(data.load_model_dir))
 
-    print("Decode %s data, nbest: %s ..."%(name, data.nbest))
+    print("Decode %s data, nbest: %s ..." % (name, data.nbest))
     start_time = time.time()
     speed, acc, p, r, f, pred_results, pred_scores = evaluate(data, model, name, data.nbest)
     end_time = time.time()
     time_cost = end_time - start_time
     if data.seg:
-        print("%s: time:%.2fs, speed:%.2fst/s; acc: %.4f, p: %.4f, r: %.4f, f: %.4f"%(name, time_cost, speed, acc, p, r, f))
+        print("%s: time:%.2fs, speed:%.2fst/s; acc: %.4f, p: %.4f, r: %.4f, f: %.4f" % (name, time_cost, speed, acc, p, r, f))
     else:
-        print("%s: time:%.2fs, speed:%.2fst/s; acc: %.4f"%(name, time_cost, speed, acc))
+        print("%s: time:%.2fs, speed:%.2fst/s; acc: %.4f" % (name, time_cost, speed, acc))
     return pred_results, pred_scores
 
 
@@ -512,20 +512,20 @@ if __name__ == '__main__':
     parser.add_argument('--status', choices=['train', 'decode'], help='update algorithm', default='train')
     parser.add_argument('--savemodel', default="data/model/saved_model.lstmcrf.")
     parser.add_argument('--savedset', help='Dir of saved data setting')
-    parser.add_argument('--train', default="data/conll03/train.bmes") 
-    parser.add_argument('--dev', default="data/conll03/dev.bmes" )  
-    parser.add_argument('--test', default="data/conll03/test.bmes") 
-    parser.add_argument('--seg', default="True") 
-    parser.add_argument('--raw') 
+    parser.add_argument('--train', default="data/conll03/train.bmes")
+    parser.add_argument('--dev', default="data/conll03/dev.bmes" )
+    parser.add_argument('--test', default="data/conll03/test.bmes")
+    parser.add_argument('--seg', default="True")
+    parser.add_argument('--raw')
     parser.add_argument('--loadmodel')
-    parser.add_argument('--output') 
+    parser.add_argument('--output')
 
     args = parser.parse_args()
     data = Data()
     data.HP_gpu = torch.cuda.is_available()
     if args.config == 'None':
-        data.train_dir = args.train 
-        data.dev_dir = args.dev 
+        data.train_dir = args.train
+        data.dev_dir = args.dev
         data.test_dir = args.test
         data.model_dir = args.savemodel
         data.dset_dir = args.savedset
@@ -560,7 +560,7 @@ if __name__ == '__main__':
         # exit(0)
         data.show_data_summary()
         data.generate_instance('raw')
-        print("nbest: %s"%(data.nbest))
+        print("nbest: %s" % (data.nbest))
         decode_results, pred_scores = load_model_decode(data, 'raw')
         if data.nbest and not data.sentence_classification:
             data.write_nbest_decoded_results(decode_results, pred_scores, 'raw')

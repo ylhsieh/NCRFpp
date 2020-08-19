@@ -95,6 +95,9 @@ def read_instance(input_file, word_alphabet, char_alphabet, feature_alphabets, l
     else:
     ### for sequence labeling data format i.e. CoNLL 2003
         for line in in_lines:
+            line = line.strip()
+            if len(line) == 1:
+                line = line + '\tO'
             if len(line) > 2:
                 pairs = line.strip().split()
                 word = pairs[0]
@@ -134,7 +137,7 @@ def read_instance(input_file, word_alphabet, char_alphabet, feature_alphabets, l
                 chars.append(char_list)
                 char_Ids.append(char_Id)
             else:
-                if (len(words) > 0) and ((max_sent_length < 0) or (len(words) < max_sent_length)) :
+                if (len(words) > 0) and ((max_sent_length < 0) or (len(words) < max_sent_length)):
                     instence_texts.append([words, features, chars, labels])
                     instence_Ids.append([word_Ids, feature_Ids, char_Ids,label_Ids])
                 words = []
@@ -145,7 +148,7 @@ def read_instance(input_file, word_alphabet, char_alphabet, feature_alphabets, l
                 feature_Ids = []
                 char_Ids = []
                 label_Ids = []
-        if (len(words) > 0) and ((max_sent_length < 0) or (len(words) < max_sent_length)) :
+        if (len(words) > 0) and ((max_sent_length < 0) or (len(words) < max_sent_length)):
             instence_texts.append([words, features, chars, labels])
             instence_Ids.append([word_Ids, feature_Ids, char_Ids,label_Ids])
             words = []
@@ -156,6 +159,7 @@ def read_instance(input_file, word_alphabet, char_alphabet, feature_alphabets, l
             feature_Ids = []
             char_Ids = []
             label_Ids = []
+
     return instence_texts, instence_Ids
 
 
